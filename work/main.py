@@ -13,7 +13,11 @@ def main():
     load_ship_names()
 
     root = tk.Tk()
-    root.withdraw()
+    #root.withdraw()
+    root.title("Space Empires")
+    root.geometry("1400x900")
+    root.minsize(1024, 768)
+    
 
     dlg = SetupDialog(root)
     root.update()
