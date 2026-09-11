@@ -385,12 +385,16 @@ class MainWindow(tk.Tk):
     def _prev_system(self):
         if self.current_system > 0:
             self.current_system -= 1
+        else: # KBR 20260910 wrap
+            self.current_system = len(self.game.systems) - 1
             self.selected_sector = 40
             self._update_display()
 
     def _next_system(self):
         if self.current_system < len(self.game.systems) - 1:
             self.current_system += 1
+        else: # KBR 20260910 wrap
+            self.current_system = 0
             self.selected_sector = 40
             self._update_display()
 
