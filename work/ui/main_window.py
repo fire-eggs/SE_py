@@ -1,3 +1,5 @@
+import pickle
+import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -540,11 +542,11 @@ class MainWindow(tk.Tk):
         text.config(state="disabled")
 
     def _save_game(self):
-        import pickle
         try:
             with open("se_save.sav", "wb") as f:
                 pickle.dump(self.game, f)
             messagebox.showinfo("Saved", "Game saved to se_save.sav")
+            self.jdump()
         except Exception as e:
             messagebox.showerror("Error", f"Save failed: {e}")
 
@@ -563,3 +565,37 @@ class MainWindow(tk.Tk):
     def _on_close(self):
         if messagebox.askokcancel("Quit", "Are you sure?"):
             self.destroy()
+
+    def jdump(self):
+        g = self.game
+        data = {
+        'current_player': g.current_player,
+        'turn_num': g.turn_num,
+        'num_play': g.num_players,
+        'num_act_play': g.num_active_players,
+        'num_com_play': g.num_comp_players,
+        'num_sys': g.num_systems,
+        'num_ship': g.num_ships,
+        'num_class': g.num_classes,
+        'num_plan': g.num_planets,
+        'comp_diff': g.computer_difficulty,
+        'game_over': g.game_over,
+        'neut': g.neutrals_enabled,
+        'warp_f': g.warp_freq,
+        'separate': g.separation,
+        
+        'systems': [],
+        'players': [],
+        'ships': [],
+        'classes': [],
+        'planets': [],
+        'msg': []
+        }
+        
+        for i in range(g.num_systems):
+            sys = g.systems[i]
+            data['systems'].append({'index': i, 'name': sys.name, 'warp_sect': sys.warp_sector, 'sectors': sys.sectors})
+            
+        with open("se_save.json", 'w') as f:
+            json.dump(data, f, indent=2)
+        
