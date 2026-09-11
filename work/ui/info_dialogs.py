@@ -44,7 +44,7 @@ class SectorInfo(tk.Toplevel):
         ttk.Button(frame, text="Close", command=self.destroy).pack(pady=10)
 
         self.transient(parent)
-        self.grab_set()
+        # KBR 20260910 throws exception, too early self.grab_set()
 
 
 class EmpireStatus(tk.Toplevel):
