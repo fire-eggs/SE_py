@@ -26,7 +26,7 @@ class SetupDialog(tk.Toplevel):
 
         r += 1
         ttk.Label(frame, text="Map Size:").grid(row=r, column=0, sticky="w", pady=2)
-        self.map_var = tk.StringVar(value="Medium")
+        self.map_var = tk.StringVar(value="Small") # KBR 20260910 "Medium")
         ttk.Combobox(frame, textvariable=self.map_var, values=["Small", "Medium", "Large"], state="readonly", width=12).grid(row=r, column=1, sticky="e", pady=2)
 
         r += 1
