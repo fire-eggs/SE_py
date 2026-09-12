@@ -96,7 +96,7 @@ class ViewShips(tk.Toplevel):
         frame = ttk.Frame(self, padding=10)
         frame.pack(fill="both", expand=True)
 
-        columns = ("name", "class", "system", "sector", "damage")
+        columns = ("name", "class", "system", "sector", "damage", "system_id")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=15)
         tree.heading("name", text="Name")
         tree.heading("class", text="Class")
@@ -109,6 +109,12 @@ class ViewShips(tk.Toplevel):
         tree.column("sector", width=50)
         tree.column("damage", width=60)
 
+        # KBR 20260912 double-click to navigate to ship system
+        tree["displaycolumns"] = ("name", "class", "system", "sector", "damage")
+        tree.bind("<Double-1>", self.double_click)
+        self.Tree = tree
+        self.Parent = parent
+
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         tree.pack(side="left", fill="both", expand=True)
@@ -118,12 +124,23 @@ class ViewShips(tk.Toplevel):
             cls = game.get_ship_class(s.class_id)
             cls_name = cls.name if cls else "?"
             sys_name = game.systems[s.system].name
-            tree.insert("", "end", values=(s.name, cls_name, sys_name, s.sector, s.damage))
+            tree.insert("", "end", values=(s.name, cls_name, sys_name, s.sector, s.damage, s.system))
 
         ttk.Button(frame, text="Close", command=self.destroy).pack(pady=5)
 
         self.transient(parent)
         self.grab_set()
+
+    def double_click(self, event):
+        # TODO also use sector index to select ship sector
+        # KBR 20260912 double-click to navigate to ship system
+        row_id = self.Tree.identify_row(event.y)
+        if row_id:
+            item_data = self.Tree.item(row_id)
+            row_values = item_data['values']
+            #print(f"Double clicked row ID: {row_id} Data:{row_values} SysId:{row_values[5]}")
+            self.Parent.GotoSystem(row_values[5])
+            # TODO close the dialog
 
 
 class ViewColonies(tk.Toplevel):
@@ -171,6 +188,7 @@ class ViewColonies(tk.Toplevel):
         self.grab_set()
 
     def double_click(self, event):
+        # TODO also use sector index to select colony sector
         # KBR 20260910 double-click to navigate to colony system
         row_id = self.Tree.identify_row(event.y)
         if row_id:
