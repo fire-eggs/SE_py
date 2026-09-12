@@ -104,12 +104,23 @@ def generate_warp_points(systems: list[System], warp_freq: int):
         selected = candidates[:target_count]
 
         for dist, j in selected:
-            sector_a = random.randint(0, MAX_SECTORS - 1)
+            # KBR 20260910 warps go only at edges
+            edge_sectors = [s for s in range(MAX_SECTORS) 
+               if s % SECTOR_COLS == 0 or s % SECTOR_COLS == SECTOR_COLS - 1
+               or s // SECTOR_COLS == 0 or s // SECTOR_COLS == SECTOR_ROWS - 1
+               and sys_a.sectors[s] == 0]
+
+            sector_a = random.choice(edge_sectors) # random.randint(0, MAX_SECTORS - 1)
             sys_a.warp_dest.append(j)
             sys_a.warp_sector.append(sector_a)
             sys_a.sectors[sector_a] = 18
 
-            sector_b = random.randint(0, MAX_SECTORS - 1)
+            edge_sectors = [s for s in range(MAX_SECTORS) 
+               if s % SECTOR_COLS == 0 or s % SECTOR_COLS == SECTOR_COLS - 1
+               or s // SECTOR_COLS == 0 or s // SECTOR_COLS == SECTOR_ROWS - 1
+               and systems[j].sectors[s] == 0]
+
+            sector_b = random.choice(edge_sectors) # random.randint(0, MAX_SECTORS - 1)
             systems[j].warp_dest.append(i)
             systems[j].warp_sector.append(sector_b)
             systems[j].sectors[sector_b] = 18
