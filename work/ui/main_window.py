@@ -241,6 +241,14 @@ class MainWindow(tk.Tk):
         if 1 <= obj <= 4:
             colors = ["#44aa44", "#44cc44", "#aaaa44", "#aaaacc"]
             self.sector_canvas.create_oval(cx - 6, cy - 6, cx + 6, cy + 6, fill=colors[min(obj - 1, len(colors) - 1)])
+        elif 6 <= obj <= 7: # KBR 20260910
+            self.sector_canvas.create_text(cx, cy, text="a", fill="#ffffff", font=("TkDefaultFont", 12, "bold"))
+        elif 8 <= obj <= 9: # KBR 20260910
+            self.sector_canvas.create_oval(cx - 6, cy - 6, cx + 6, cy + 6, fill="#ffffff")
+        elif obj == 10: # KBR 20260910
+            self.sector_canvas.create_text(cx, cy, text="ms", fill="#ffffff", font=("TkDefaultFont", 12))
+        elif obj == 11: # KBR 20260910
+            self.sector_canvas.create_text(cx, cy, text="hc", fill="#ffffff", font=("TkDefaultFont", 12))
         elif obj == 18:
             self.sector_canvas.create_text(cx, cy, text="W", fill="#00ffff", font=("TkDefaultFont", 12, "bold"))
         elif 12 <= obj <= 17:
