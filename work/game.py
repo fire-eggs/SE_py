@@ -66,8 +66,9 @@ class Game:
 
         total_players = num_human + num_comp
         if neutrals:
+            # TODO this logic seems incorrect
             neut_sys = [s for s in self.systems if len(find_colony_sectors(s)) > 0]
-            num_neuts = min(4, len(neut_sys))
+            num_neuts = min(3, len(neut_sys))
             total_players += num_neuts
 
         self.num_players = total_players
@@ -88,13 +89,15 @@ class Game:
             self.players[idx].name = f"Computer {i + 1}"
             self.players[idx].is_computer = True
 
-        if neutrals:
-            self._setup_neutrals(num_human + num_comp, neut_sys, num_neuts)
+        #KBR 20260912 _place_homeworlds is also establishing neutrals
+        #if neutrals:
+        #    self._setup_neutrals(num_human + num_comp, neut_sys, num_neuts)
 
         self._place_homeworlds()
         self._create_initial_fleets()
         self._update_avail_components()
         self._send_message("New game started", 0)
+        self._send_message(f"Players: {total_players} Human:{num_human} Comp:{num_comp} Neut:{num_neuts if neutrals else 0}",0)
 
     def _setup_neutrals(self, start_idx: int, neut_sys: list, count: int):
         random.shuffle(neut_sys)
@@ -160,7 +163,7 @@ class Game:
 
     def _create_initial_fleets(self):
         for player in self.players:
-            if player.index > self.num_active_players and not self.neutrals_enabled:
+            if player.index > self.num_active_players: # TODO KBR 20260912 [neutrals initial ship in error] and not self.neutrals_enabled:
                 break
             sys_idx = player.home_system
             sys = self.systems[sys_idx]
