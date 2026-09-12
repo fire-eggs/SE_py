@@ -110,12 +110,12 @@ class Game:
                 sys.sectors[sector] = 1
                 planet = Planet(
                     planet_id=len(self.planets) + 1,
-                    value=random.randint(5, 15),
-                    type_idx=1,
+                    value=random.randint(5, 15),     # TODO VB: l016A = Int(Rnd * 200) + 300
+                    type_idx=1, # TODO VB does not change planet type
                     name=f"{sys.name} Prime",
-                    colony_type=2,
+                    colony_type=3,
                     owner=idx + 1,
-                    population=random.randint(100, 500),
+                    population=500, # as per VB random.randint(100, 500),
                     system=sys.sys_index,
                     sector=sector,
                 )
@@ -146,12 +146,12 @@ class Game:
 
             planet = Planet(
                 planet_id=len(self.planets) + 1,
-                value=10,
-                type_idx=1,
+                value=10, # TODO Int(Rnd * 200) + 500
+                type_idx=1, # TODO machine planet
                 name=f"{sys.name} Prime",
-                colony_type=2,
+                colony_type=3,
                 owner=player.index,
-                population=200,
+                population=500,
                 system=sys_idx,
                 sector=sector,
             )
