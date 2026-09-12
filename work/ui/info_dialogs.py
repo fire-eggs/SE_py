@@ -127,7 +127,7 @@ class ViewShips(tk.Toplevel):
 
 
 class ViewColonies(tk.Toplevel):
-    def __init__(self, parent, game, player):
+    def __init__(self: MainWindow, parent, game, player):
         super().__init__(parent)
         self.title("Colonies")
         self.geometry("500x300")
@@ -135,7 +135,7 @@ class ViewColonies(tk.Toplevel):
         frame = ttk.Frame(self, padding=10)
         frame.pack(fill="both", expand=True)
 
-        columns = ("name", "type", "pop", "value", "system")
+        columns = ("name", "type", "pop", "value", "system", "system_id")
         tree = ttk.Treeview(frame, columns=columns, show="headings", height=15)
         tree.heading("name", text="Name")
         tree.heading("type", text="Type")
@@ -148,6 +148,12 @@ class ViewColonies(tk.Toplevel):
         tree.column("value", width=60)
         tree.column("system", width=80)
 
+        # KBR 20260910 double-click to navigate to colony system
+        tree["displaycolumns"] = ("name", "type", "pop", "value", "system")
+        tree.bind("<Double-1>", self.double_click)
+        self.Tree = tree
+        self.Parent = parent
+        
         scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
         tree.pack(side="left", fill="both", expand=True)
@@ -157,9 +163,20 @@ class ViewColonies(tk.Toplevel):
             if p.owner == player.index:
                 colony = ["None", "Outpost", "Colony", "Settlement"][p.colony_type]
                 sys_name = game.systems[p.system].name
-                tree.insert("", "end", values=(p.name, colony, p.population, p.value, sys_name))
+                tree.insert("", "end", values=(p.name, colony, p.population, p.value, sys_name, p.system))
 
         ttk.Button(frame, text="Close", command=self.destroy).pack(pady=5)
 
         self.transient(parent)
         self.grab_set()
+
+    def double_click(self, event):
+        # KBR 20260910 double-click to navigate to colony system
+        row_id = self.Tree.identify_row(event.y)
+        if row_id:
+            item_data = self.Tree.item(row_id)
+            row_values = item_data['values']
+            #print(f"Double clicked row ID: {row_id} Data:{row_values} SysId:{row_values[5]}")
+            self.Parent.GotoSystem(row_values[5])
+            # TODO close the dialog
+
