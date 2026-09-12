@@ -36,25 +36,67 @@ def create_system(index: int, x: int, y: int) -> System:
     sys.warp_sector = []
     return sys
 
+def get_empty_sectors(sys: System):
+    empty_sectors = [s for s in range(MAX_SECTORS) 
+                   if sys.sectors[s] == 0
+                   and s != 40
+                   and (s % SECTOR_COLS) not in (0, SECTOR_COLS - 1)
+                   and (s // SECTOR_COLS) not in (0, SECTOR_ROWS - 1)]
+    return empty_sectors
+    
+def fill_stellar_system(sys: System):
+    # 'normal' system with a star
+    # place star in center
+    sys.sectors[40] = random.choice([12,13,14,15,16]) # TODO is neutron star here?
+    
+    # add 1-9 planets/asteroids/storms
+    num_objects = random.randint(1,9)
+    for _ in range(num_objects):
+        # find empty sector (not center, not edge)
+        empty_sectors = get_empty_sectors(sys)
+        if not empty_sectors:
+            break
+            
+        sector = random.choice(empty_sectors)
+        
+        roll = random.randint(1, 15)
+        if roll == 1:
+            # Magnetic storm, hydrogen cloud
+            obj_type = random.choice([10,11])
+        elif roll <= 3:
+            # Asteroids
+            obj_type = random.choice([6,7]) # TODO whats the diff between asteroid types?
+            # TODO how record planet? create_planet(state, system.system_index, sector, PlanetType.ASTEROID_BELT)
+        else:
+            # Regular planet
+            obj_type = random.choice([1,2,3,4,5,8,9])
+            # TODO how record planet? create_planet(state, system.system_index, sector, PlanetType.PLANET)
+        sys.sectors[sector] = int(obj_type)
+
+def fill_no_star_system(sys: System):
+    # special system (no star)
+    special_type = random.choice([10,11,17]) # TODO is neutron star here?
+    sys.sectors[40] = special_type
+    
+    num_objects = random.randint(1, 9)
+    for _ in range(num_objects):
+        empty_sectors = get_empty_sectors(sys)
+        if not empty_sectors:
+            break
+        sector = random.choice(empty_sectors)
+        
+        if special_type == 17:  # Collapsing star
+            sys.sectors[sector] = random.choice([6,7]) # TODO whats the diff between asteroid types?
+            # TODO how record planet? create_planet(state, system.system_index, sector, PlanetType.ASTEROID_BELT) #PlanetType.PLANET)
+        else:
+            sys.sectors[sector] = random.choice([10,11])
 
 def place_stellar_objects(sys: System, planet_id_counter: list):
-    for s in range(MAX_SECTORS):
-        roll = random.random()
-        if roll < 0.05:
-            obj = random.choice([1, 2, 3, 4])
-            sys.sectors[s] = obj
-        elif roll < 0.10:
-            sys.sectors[s] = random.choice([6, 7])
-        elif roll < 0.13:
-            sys.sectors[s] = random.choice([8, 9])
-        elif roll < 0.16:
-            sys.sectors[s] = random.choice([10, 11])
-        elif roll < 0.20:
-            obj = random.choice([12, 13, 14, 15, 16, 17])
-            sys.sectors[s] = obj
+    # KBR 20260910 star/no-star
+    if random.random() < 0.8:
+        fill_stellar_system(sys)
         else:
-            sys.sectors[s] = random.choice([0, 19, 20, 21, 22, 23, 24, 25, 26, 27])
-
+        fill_no_star_system(sys)
 
 def planet_position(population: int) -> int:
     if population < 250:
