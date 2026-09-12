@@ -5,9 +5,6 @@ from entities import System, Planet
 from config import *
 
 SYSTEM_NAMES = [
-    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta",
-    "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi",
-    "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega",
     "Aurora", "Nova", "Vega", "Sirius", "Rigel", "Altair", "Deneb",
     "Polaris", "Capella", "Aldebaran", "Antares", "Arcturus", "Betelgeuse",
     "Canopus", "Castor", "Pollux", "Procyon", "Regulus", "Spica",
@@ -21,6 +18,9 @@ SYSTEM_NAMES = [
     "Scorpius", "Ophiuchus", "Aquarius", "Pisces", "Aries", "Taurus",
     "Cepheus", "Lacerta", "Vulpecula", "Sagitta", "Delphinus", "Equuleus",
     "Bootes", "Coma", "Ursa", "Camelopardalis", "Lynx",
+    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta",
+    "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi",
+    "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega",    
 ]
 
 SYSTEM_GRID_SIZE = 50
@@ -90,14 +90,14 @@ def fill_no_star_system(sys: System):
             # TODO how record planet? create_planet(state, system.system_index, sector, PlanetType.ASTEROID_BELT) #PlanetType.PLANET)
         else:
             sys.sectors[sector] = random.choice([10,11])
-
+    
 def place_stellar_objects(sys: System, planet_id_counter: list):
     # KBR 20260910 star/no-star
     if random.random() < 0.8:
         fill_stellar_system(sys)
-        else:
+    else:
         fill_no_star_system(sys)
-
+        
 def planet_position(population: int) -> int:
     if population < 250:
         return random.randint(1, population) if population > 0 else 0
