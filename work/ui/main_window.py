@@ -613,3 +613,9 @@ class MainWindow(tk.Tk):
         with open("se_save.json", 'w') as f:
             json.dump(data, f, indent=2)
         
+    def GotoSystem(self, sysid):
+        # TODO use in _next_system, _prev_system
+        # KBR 20260910 change the active system view
+        self.current_system = sysid
+        self.selected_sector = 40 # TODO target sector
+        self._update_display()
