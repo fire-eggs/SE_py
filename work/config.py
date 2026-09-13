@@ -70,6 +70,30 @@ STELLAR_OBJECTS = [
     "Empty Space",          # 27
 ]
 
+STELLAR_OBJ_BASE_VALUES = [
+    0, # empty
+    10,# terrestroid
+    7, # green
+    4, # desert
+    1, # ice TODO not in VB
+    4, # gas giant == ringed_gaseous from VB
+    5, # asteroid
+    5, # asteroid TODO duplication
+    3, # moon
+    3, # moon TODO duplication
+    0, #
+    0, # 
+    0, # red star
+    0, #
+    0, #
+    0, #
+    0, #
+    0, #
+    0, #
+    0, #
+]
+    
+
 COLONY_TYPES = {
     0: "None",
     1: "Outpost",

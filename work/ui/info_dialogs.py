@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from config import PLAYER_COLORS, STELLAR_OBJECTS
+from config import PLAYER_COLORS, STELLAR_OBJECTS, STELLAR_OBJ_BASE_VALUES
 
 
 class SectorInfo(tk.Toplevel):
@@ -13,6 +13,9 @@ class SectorInfo(tk.Toplevel):
         sys = game.systems[system_idx]
         obj_idx = sys.sectors[sector]
         obj_name = STELLAR_OBJECTS[obj_idx] if obj_idx < len(STELLAR_OBJECTS) else "Unknown"
+        # TODO colonized planet has "real" value
+        obj_val = STELLAR_OBJ_BASE_VALUES[obj_idx] if obj_idx < 10 and obj_idx > 0 else 0
+        obj_val_str = "0" if obj_val < 1 else str(50 * obj_val) + "+"
 
         frame = ttk.Frame(self, padding=10)
         frame.pack(fill="both", expand=True)
@@ -20,6 +23,7 @@ class SectorInfo(tk.Toplevel):
         ttk.Label(frame, text=f"System: {sys.name}", font=("TkDefaultFont", 12, "bold")).pack(anchor="w")
         ttk.Label(frame, text=f"Sector: {sector} ({sector % 9 + 1}, {sector // 9 + 1})").pack(anchor="w")
         ttk.Label(frame, text=f"Terrain: {obj_name}").pack(anchor="w")
+        ttk.Label(frame, text=f"Value: {obj_val_str}").pack(anchor="w")
 
         # Ships in sector
         ships = [s for s in game.ships if s.system == system_idx and s.sector == sector]
