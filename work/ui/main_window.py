@@ -26,7 +26,9 @@ class MainWindow(tk.Tk):
         self.sector_from = None
 
         self._build_ui()
-        self._update_display()
+        # KBR 20260913 start in the player's home system
+        target = game.players[0].home_system
+        self.GotoSystem(target)
 
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
@@ -397,16 +399,16 @@ class MainWindow(tk.Tk):
             self.current_system -= 1
         else: # KBR 20260910 wrap
             self.current_system = len(self.game.systems) - 1
-            self.selected_sector = 40
-            self._update_display()
+        self.selected_sector = 40
+        self._update_display()
 
     def _next_system(self):
         if self.current_system < len(self.game.systems) - 1:
             self.current_system += 1
         else: # KBR 20260910 wrap
             self.current_system = 0
-            self.selected_sector = 40
-            self._update_display()
+        self.selected_sector = 40
+        self._update_display()
 
     def _end_turn(self):
         player = self.game.get_player(self.game.current_player)
