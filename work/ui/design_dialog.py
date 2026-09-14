@@ -12,7 +12,7 @@ class DesignDialog(tk.Toplevel):
         self.game = game
         self.player = player
         self.result_class = None
-        self.geometry("600x500")
+        self.geometry("600x650") # KBR 20260914 initial height too short
 
         self.compos = []
         self.shields = 0
@@ -26,7 +26,8 @@ class DesignDialog(tk.Toplevel):
         hull_frame.pack(fill="x", pady=2)
 
         self.hull_var = tk.StringVar()
-        hull_names = [f"{h['abbr']} - {h['name']} (S:{h['size']} C:{h['cost']} T:{h['tech']})" for h in HULL_TYPES]
+        # KBR 20260914 player can't use hull above their tech level
+        hull_names = [f"{h['abbr']} - {h['name']} (S:{h['size']} C:{h['cost']} T:{h['tech']})" for h in HULL_TYPES if h['tech'] <= player.tech]
         self.hull_combo = ttk.Combobox(hull_frame, textvariable=self.hull_var, values=hull_names, state="readonly", width=60)
         self.hull_combo.pack(fill="x")
         self.hull_combo.current(0)
@@ -41,7 +42,7 @@ class DesignDialog(tk.Toplevel):
             ttk.Radiobutton(type_frame, text=f"{code} ({name})", variable=self.type_var, value=code).pack(side="left", padx=2)
 
         # Available components
-        compo_frame = ttk.LabelFrame(frame, text="Available Components", padding=5)
+        compo_frame = ttk.LabelFrame(frame, text="Available Components (double-click to add)", padding=5)
         compo_frame.pack(fill="both", expand=True, pady=2)
 
         scrollbar = ttk.Scrollbar(compo_frame)
@@ -94,22 +95,33 @@ class DesignDialog(tk.Toplevel):
 
     def _on_hull_change(self, event=None):
         self.selected_hull = self.hull_combo.current()
+        self.compos.clear() # KBR 20260914 on hull change, reset selected components
         self._refresh_components()
         self._update_info()
 
+    def _selected_hull(self):
+        # KBR 20260914 hulls are now filtered, get the actual hull selected
+        target_value = self.hull_combo.get()[0:2]
+        #hull = HULL_TYPES[self.selected_hull]
+        hull = next((x for x in HULL_TYPES if x.get("abbr") == target_value), None)
+        return hull
+
     def _refresh_components(self):
         self.compo_listbox.delete(0, "end")
-        hull = HULL_TYPES[self.selected_hull]
+        
+        hull = self._selected_hull()
         hull_space = hull["size"]
         used = sum(get_compo(i).size for i in self.compos) + self.shields
         space_left = hull_space - used
-
+        
         for i, comp in enumerate(ALL_COMPONENTS):
             if not self.player.avail_compo[i]:
                 continue
             if comp.size > space_left:
                 continue
             if comp.category == "H":
+                continue
+            if (comp.category == "E" or comp.category == "C" or comp.category == "M") and hull["max_eng"] < 1: # KBR 20260914 no engines/cargo/settle for space stations
                 continue
             if comp.category == "E" and hull["max_eng"] > 0:
                 eng_count = count_engines([get_compo(c) for c in self.compos])
@@ -132,7 +144,8 @@ class DesignDialog(tk.Toplevel):
         if found is None:
             return
 
-        hull = HULL_TYPES[self.selected_hull]
+        #hull = HULL_TYPES[self.selected_hull]
+        hull = self._selected_hull()
         used = sum(get_compo(i).size for i in self.compos) + self.shields
         if used + found.size > hull["size"]:
             messagebox.showwarning("No Space", "Not enough hull space!")
@@ -153,7 +166,8 @@ class DesignDialog(tk.Toplevel):
             self._update_info()
 
     def _update_info(self):
-        hull = HULL_TYPES[self.selected_hull]
+        #hull = HULL_TYPES[self.selected_hull]
+        hull = self._selected_hull()
         used = sum(get_compo(i).size for i in self.compos)
         shield_pts = self.shields_var.get()
         used += shield_pts
@@ -171,7 +185,8 @@ class DesignDialog(tk.Toplevel):
             self.added_listbox.insert("end", f"{comp.name} (S:{comp.size} C:{comp.cost})")
 
     def _ok(self):
-        hull = HULL_TYPES[self.selected_hull]
+        #hull = HULL_TYPES[self.selected_hull]
+        hull = self._selected_hull()
         shield_pts = self.shields_var.get()
         cost = hull["cost"] + sum(get_compo(i).cost for i in self.compos) + shield_pts * 1
         if cost <= 0:
