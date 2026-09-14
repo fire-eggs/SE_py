@@ -22,7 +22,7 @@ class SetupDialog(tk.Toplevel):
         r += 1
         ttk.Label(frame, text="Computer Players:").grid(row=r, column=0, sticky="w", pady=2)
         self.comps_var = tk.IntVar(value=1)
-        ttk.Spinbox(frame, from_=0, to=10, textvariable=self.comps_var, width=5).grid(row=r, column=1, sticky="e", pady=2)
+        ttk.Spinbox(frame, from_=1, to=3, textvariable=self.comps_var, width=5).grid(row=r, column=1, sticky="e", pady=2)
 
         r += 1
         ttk.Label(frame, text="Map Size:").grid(row=r, column=0, sticky="w", pady=2)
