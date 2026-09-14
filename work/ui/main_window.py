@@ -197,8 +197,10 @@ class MainWindow(tk.Tk):
                     if pc not in colors_used:
                         cx = x1 + 10 + len(colors_used) * 12
                         cy = y1 + 10
-                        pts = [cx, cy-3, cx-2, cy+3, cx+2, cy+3]
-                        self.sector_canvas.create_polygon(pts,fill=pc,outline="white",width=1)
+                        #pts = [cx, cy-3, cx-2, cy+3, cx+2, cy+3]
+                        pts = [cx, cy-4, cx-3, cy+4, cx+3, cy+4]
+                        #self.sector_canvas.create_polygon(pts,fill=pc,outline="white",width=1)
+                        self.sector_canvas.create_polygon(pts,fill=pc,outline=pc,width=1)
                         #self.sector_canvas.create_oval(cx - 4, cy - 4, cx + 4, cy + 4, fill=pc, outline="white")
                         colors_used.add(pc)
 
