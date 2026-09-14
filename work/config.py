@@ -35,7 +35,7 @@ COLORS = {
 PLAYER_COLORS = {
     1: "#FF0000",
     2: "#00AA00",
-    3: "#0000FF",
+    3: "#6F8BEF", # "#0000FF",
     4: "#FF00FF",
 }
 
